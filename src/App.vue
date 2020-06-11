@@ -7,12 +7,22 @@
 
 <script>
   import FooterGuide from './components/FooterGuide/FooterGuide.vue'
+  import axios from 'axios'
+  import {mapActions} from 'vuex'
   export default {
+    mounted () {
+      this.$store.dispatch('getAddress')
+//      this.getAddress()
+    },
+    methods: {
+      ...mapActions(['getAddress'])
+    },
     // 向外暴露
     components: {
       FooterGuide
     }
   }
+
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

@@ -14,11 +14,6 @@
     props: {
       title: String
     },
-    data() {
-      return{
-
-      }
-    }
   }
 </script>
 
