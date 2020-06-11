@@ -10,7 +10,7 @@
     </HeaderTop>
     <!--首页导航-->
     <nav class="msite_nav">
-      <div class="swiper-container">
+      <div class="swiper-container" v-if="categorys.length">
         <!--轮播容器-->
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="(categorys, index) in categoryArr" :key="index">
@@ -25,6 +25,7 @@
         <!-- Add Pagination 分页指示器-->
         <div class="swiper-pagination"></div>
       </div>
+      <img src="./images/msite_back.svg" alt="back" v-else>
     </nav>
     <!--首页附近商家-->
     <div class="msite_shop_list">
@@ -54,13 +55,7 @@
     },
     mounted () {
       this.$store.dispatch('getCategory')
-//      //创建swiper对象
-//      new Swiper ('.swiper-container', {
-//        loop: true,
-//        pagination: {
-//          el: '.swiper-pagination'
-//        }
-//      })
+      this.$store.dispatch('getShopList')
     },
 
     computed: {
