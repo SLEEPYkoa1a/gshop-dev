@@ -3,6 +3,7 @@ export  default {
   longitude: 116.36837,
   address:{},
   categorys: [], //食品分类
-  shops: []
+  shops: [],
+  userInfo: {}  //登录用户信息
 
 }

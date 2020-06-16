@@ -16,12 +16,18 @@ export const reqShops = (longitude, latitude) => ajax(BASE_URL+'/shops', {longit
 export const reqShopList = (keyword, geohash) => ajax(BASE_URL+'/search_shops',{keyword, geohash})
 
 // [5、获取一次性验证码]
-export const reqCaptcha = () => ajax('/captcha')
 
 // [6、用户名密码登陆]
-
+export const reqPwdLogin = ({name, pwd, captcha}) => ajax(BASE_URL+'/login_pwd', {name, pwd, captcha}, 'POST')
 
 // [7、发送短信验证码](#7发送短信验证码)<br/>
+export const reqConfirmCode = (phone) => ajax(BASE_URL+'/sendcode', {phone})
+
 // [8、手机号验证码登陆](#8手机号验证码登陆)<br/>
+export const reqCodeLogin= (phone, code) => ajax(BASE_URL+'/login_sms', {phone,code}, "POST")
+
 // [9、根据会话获取用户信息](#9根据会话获取用户信息)<br/>
+export const reqUserInfo = () => ajax(BASE_URL+'/userinfo')
+
 // [10、用户登出](#10用户登出)<br/>
+export const reqLogout = () => ajax(BASE_URL+'/logout')

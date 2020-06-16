@@ -2,12 +2,17 @@
 import {
   RECEIVE_SHOPS,
   RECEIVE_CATEGORYS,
-  RECEIVE_ADDRESS
+  RECEIVE_ADDRESS,
+  RECEIVE_RECORD_USER,
+  RECEIVE_USER,
+  RESET_USER_INFO
 } from './mutations-types'
 import {
   reqAddress,
   reqFoodCategorys,
-  reqShops
+  reqShops,
+  reqUserInfo,
+  reqLogout
 } from '../api'
 
 export  default {
@@ -34,7 +39,6 @@ export  default {
   async getShopList({commit, state}) {
     const {longitude, latitude} = state
     const result = await reqShops(longitude, latitude)
-    console.log('1')
     if (result.code === 0) {
       const shops = result.data
       commit(RECEIVE_SHOPS, {shops})
@@ -42,12 +46,28 @@ export  default {
   },
 
 
-
-
   getCategorys({commit}, categorys){
     commit(RECEIVE_ADDRESS, {categorys})
   },
   getShops({commit}, shops){
     commit(RECEIVE_SHOPS, {shops})
+  },
+  //同步记录用户登录信息
+  recordUser({commit}, userInfo) {
+    commit(RECEIVE_RECORD_USER, {userInfo})
+  },
+  //异步获取已登录的用户信息
+  async getUserInfo({commit}) {
+    const result = await reqUserInfo()
+    if(result.code === 0){
+      const userInfo = result.data
+      commit (RECEIVE_USER, {userInfo})
+    }
+  },
+  async reqLogout({commit}) {
+    const result = await reqLogout()
+    if(result.code === 0){
+      commit (RESET_USER_INFO)
+    }
   }
 }

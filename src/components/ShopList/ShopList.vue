@@ -39,10 +39,13 @@
         </a>
       </li>
     </ul>
-    <img src="./images/shop_back.svg" alt="back" v-else>
-    <img src="./images/shop_back.svg" alt="back" v-else>
-    <img src="./images/shop_back.svg" alt="back" v-else>
-    <img src="./images/shop_back.svg" alt="back" v-else>
+    <ul>
+      <li><img src="./images/shop_back.svg" alt="back" ></li>
+      <li><img src="./images/shop_back.svg" alt="back" ></li>
+      <li><img src="./images/shop_back.svg" alt="back" ></li>
+      <li><img src="./images/shop_back.svg" alt="back" ></li>
+      <li><img src="./images/shop_back.svg" alt="back" ></li>
+    </ul>
   </div>
 </template>
 
