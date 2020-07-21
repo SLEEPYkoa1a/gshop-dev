@@ -13,8 +13,8 @@
           <div :class="{on: loginClass}">
             <section class="login_message">
               <input type="tel" maxlength="11" placeholder="手机号" v-model="phone">
-              <button :disabled="!getRightPhone" @click.prevent="getConfirm"
-                      class="get_verification" :class="{right_phone: getRightPhone}">
+              <button :disabled="!getRightPhone || confirmTime > 0" @click.prevent="getConfirm"
+                      class="get_verification" :class="{right_phone: getRightPhone }">
                 {{confirmTime > 0 ? '已发送('+ confirmTime + ')' : '获取验证码'}}
               </button>
             </section>
@@ -44,12 +44,16 @@
               </section>
               <section class="login_message">
                 <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
-                <img class="get_verification" src="http://localhost:4000/captcha"
-                     @click="getCaptcha" ref="captcha" >
+                <!--注释的是从后台获取图片验证码-->
+                <!--<img class="get_verification" src="http://localhost:4000/captcha"-->
+                     <!--@click="getCaptcha" ref="captcha" >-->
+                <img class="get_verification" src="./images/captcha.svg"
+                     ref="captcha" >
               </section>
             </section>
           </div>
-          <button class="login_submit" @click="login">登录</button>
+          <input type="button" class="login_submit" @click="login" value="登录">
+          <!--<button class="login_submit" @click="login2">登录</button>-->
         </form>
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
@@ -63,7 +67,10 @@
 
 <script>
   import LoginTip from '../../components/LoginTip/LoginTip.vue'
-  import {reqConfirmCode, reqCodeLogin, reqPwdLogin } from '../../api/index'
+  import {reqConfirmCode, reqCodeLogin, reqPwdLogin  } from '../../api/index'
+//  import {reqCodeLogin, reqPwdLogin } from '../../api/index'
+//  import {reqConfirmCode} from './reqConfirmCode'
+  import {mapState} from 'vuex'
   export default { //向外暴露
     data() {
       return {
@@ -77,14 +84,14 @@
         captcha: '', //图片验证码
         alertText: '',//登录提示文字
         loginTipDisplay: false //是否显示登录提示
-
       }
     },
     computed: {
       getRightPhone() {
         return /^1\d{10}$/.test(this.phone)
-//          && (this.confirmTime === 0)
-      }
+      },
+      ...mapState(['userList','capt','confirm'])
+
     },
     methods: {
       goTo(path) {
@@ -93,7 +100,6 @@
       async getConfirm () {
         //倒计时
         if(!this.confirmTime){
-          console.log('111')
           this.confirmTime = 30
           this.intervalId = setInterval(() =>{
             this.confirmTime --
@@ -104,21 +110,28 @@
         }
         //ajax
         const result = await reqConfirmCode(this.phone)
-        if(result.code === 1) {
-          this.showLoginTip(result.msg)
-          if(this.confirmTime){
-            this.confirmTime = 0
-            clearInterval(this.intervalId)
-            this.intervalId = undefined
-          }
+
+        if(result.code === 0){
+          this.showLoginTip('验证码为:'+ result.data)
 
         }
+//        if(result.code === 1) {
+//          this.showLoginTip(result.msg)
+//          if(this.confirmTime){
+//            this.confirmTime = 0
+//            clearInterval(this.intervalId)
+//            this.intervalId = undefined
+//          }
+//        }
 
       },
       //登录按钮：1，检查输入合法性，2，实现登录功能
       async login() {
+
         const {name, pwd, captcha, confirmCode, phone} = this
         let result
+        let loginUser
+        //loginClass表示登录方式,true为手机验证码登录
         if(this.loginClass) {
           //1合法性检查
           if(!this.getRightPhone){
@@ -132,9 +145,44 @@
             this.showLoginTip("验证码错误")
             return
           }
-          console.log(1)
-          result = await reqCodeLogin(phone, confirmCode)
 
+          //以下注释部分为有后端时的短信验证登录
+//          result = await reqCodeLogin(phone, confirmCode)
+
+          //以下代码使用本地模拟验证短信
+          else if(this.confirm != confirmCode){
+            result = {
+              code:1,
+              msg: "验证码有误"
+            }
+          }
+          else{
+            //验证码通过,查看用户列表是否有此手机用户
+            loginUser = this.userList.find(function(value, index){
+              return value.phone === phone
+            })
+            //无此用户,添加进去
+            if(!loginUser){
+
+              result = {
+                code: 0,
+                data: {
+                  _id: this.userList.length+1,
+                  phone: this.phone
+                }
+              }
+              this.$store.dispatch('addUser',result.data)
+            }
+            //有此用户,直接返回
+            else{
+              result = {
+                code: 0,
+                data: loginUser
+              }
+            }
+            //以上代码为本地模拟短信登录
+
+          }
         }else{
           if(!name){
             //用户名需要填写
@@ -149,9 +197,37 @@
             this.showLoginTip("图片验证码需要填写")
             return
           }
-          result = await reqPwdLogin({name, pwd, captcha})
+          //注释的是调用后台登录的代码
+//          result = await reqPwdLogin({name, pwd, captcha})
 
+
+          //以下是本地检测用户,直接返回用户数据
+          if(captcha != this.capt){
+            this.showLoginTip('验证码错误')
+            return
+          }
+          loginUser = this.userList.find(function(value,index){
+            return value.name === name
+          })
+
+          if(!loginUser || loginUser.pwd != pwd){
+            result = {
+              code: 1,
+              msg: '用户名或密码错误'
+            }
+            console.log(result)
+          }else{
+            result = {
+              code: 0,
+              data:{
+                _id: loginUser._id,
+                name: loginUser.name,
+                phone: loginUser.phone
+              }
+            }
+          }
         }
+
 
         //清除定时
         if(this.confirmTime){
@@ -168,10 +244,15 @@
           this.$router.replace('/profile')
         }else{
           this.showLoginTip(result.msg)
-          this.getCaptcha()
+
+          //启用后台api需要刷新验证码
+//          this.getCaptcha()
+
+          //本地模拟登录不需要刷新
         }
 
       },
+
       //输入错误提示
       showLoginTip (alertText){
         this.loginTipDisplay = !this.loginTipDisplay

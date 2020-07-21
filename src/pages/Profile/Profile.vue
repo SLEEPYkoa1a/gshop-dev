@@ -8,7 +8,9 @@
             <i class="iconfont icon-person"></i>
           </div>
           <div class="user-info">
-            <p class="user-info-top" v-if="!userInfo.phone">{{userInfo.name || '登录/注册'}}</p>
+            <!--没有phone代表没有登录-->
+            <p class="user-info-top" v-if="!userInfo.phone && !userInfo.name">{{userInfo.name  || '登录/注册'}}</p>
+            <p class="user-info-top" v-if="userInfo.name">{{userInfo.name}}</p>
             <p>
               <span class="user-icon">
                 <i class="iconfont icon-shouji icon-mobile"></i>
@@ -103,14 +105,16 @@
   import {mapState} from 'vuex'
   export default { //向外暴露
     computed: {
-
-      ...mapState(['userInfo'])
+      ...mapState(['userInfo','shopInfo'])
     },
     methods: {
       logout() {
         MessageBox.confirm("确定退出登录？").then(
           action =>{
+
             this.$store.dispatch('reqLogout')
+
+
           },
           action => {
 

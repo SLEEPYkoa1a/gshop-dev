@@ -1,7 +1,6 @@
 <template>
   <section class="msite">
     <HeaderTop :title="address.name">
-
       <router-link slot="left" class="header_search" to="/search">
         <i class="iconfont icon-sousuo"></i>
       </router-link>
@@ -58,6 +57,7 @@
     mounted () {
       this.$store.dispatch('getCategory')
       this.$store.dispatch('getShopList')
+      console.log(1)
     },
 
     computed: {
@@ -82,8 +82,6 @@
     },
     watch: {
       categorys(value) {
-
-
         this.$nextTick(()=>{
           //创建swiper对象
           new Swiper ('.swiper-container', {

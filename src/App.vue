@@ -11,15 +11,14 @@
   import {mapActions} from 'vuex'
   export default {
     mounted () {
-//      this.$store.dispatch('getAddress')
-//      this.$store.dispatch('getUserInfo')
       this.getAddress()
+//      this.$store.dispatch('getAddress')
       this.getUserInfo()
     },
     methods: {
       ...mapActions(['getAddress', 'getUserInfo'])
     },
-    // 向外暴露
+    //注册组件
     components: {
       FooterGuide
     }

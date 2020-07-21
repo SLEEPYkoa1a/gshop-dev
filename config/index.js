@@ -17,7 +17,15 @@ module.exports = {
         pathRewrite: {// 重写路径: 去掉路径中开头的'/api'
           '^/api': ''
         }
+      },
+      '/new': {
+        target: 'https://app.cloopen.com:8883', // 代理目标的基础路径
+        changeOrigin: true, // 支持跨域
+        pathRewrite: {// 重写路径: 去掉路径中开头的'/new'
+          '^/new': ''
+        }
       }
+
     },
 
     // Various Dev Server settings
@@ -58,7 +66,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: './',
 
     /**
      * Source Maps

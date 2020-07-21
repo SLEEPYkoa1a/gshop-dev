@@ -5,7 +5,13 @@ import {
   RECEIVE_SHOPS,
   RECEIVE_USER,
   RECEIVE_RECORD_USER,
-  RESET_USER_INFO
+  RESET_USER_INFO,
+  GET_SHOP_GOODS,
+  GET_SHOP_RATINGS,
+  GET_SHOP_INFO,
+  UPDATE_CART,
+  CLEAR_CART,
+  ADD_USER
 } from './mutations-types'
 
 export  default {
@@ -25,7 +31,24 @@ export  default {
     state.userInfo = userInfo
   },
   [RESET_USER_INFO](state){
-    console.log('1')
     state.userInfo = {}
+  },
+  [ADD_USER](state,{newUser}){
+    state.userList.push(newUser)
+  },
+  [GET_SHOP_GOODS](state, {shopGoods}) {
+    state.shopGoods = shopGoods
+  },
+  [GET_SHOP_RATINGS] (state, {shopRatings}) {
+    state.shopRatings = shopRatings
+  },
+  [GET_SHOP_INFO] (state, {shopInfo}) {
+    state.shopInfo = shopInfo
+  },
+  [UPDATE_CART] (state, {cartInfo}){
+    state.cartInfo = cartInfo
+  },
+  [CLEAR_CART] (state){
+    state.cartInfo = []
   }
 }
