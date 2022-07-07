@@ -18,7 +18,7 @@
     "js-base64": "^2.6.2",
     "mint-ui": "^2.2.13",
     "mockjs": "^1.1.0",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "request": "^2.88.2",
     "svg-captcha": "^1.4.0",
     "swiper": "^5.4.5",
